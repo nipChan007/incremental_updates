@@ -39,6 +39,24 @@
         <name>javax.jdo.option.ConnectionPassword</name>
         <value>mypassword</value>
     </property>
+		
+	<property>
+		<name>datanucleus.autoCreateSchema</name>
+		<value>false</value>
+	</property>
+	
+	<property>
+		<name>datanucleus.fixedDatastore</name>
+		<value>true</value>
+	</property>
+	
+	<property>
+		<name>hive.metastore.uris</name>
+		<value>thrift://<0.0.0.0>:9999</value>
+		<description>IP address and port of the metastore host</description>
+	</property>
+
+<!--
 <property>
   <name>hive.hwi.listen.host</name>
   <value>0.0.0.0</value>
@@ -51,10 +69,11 @@
   <name>hive.hwi.war.file</name>
   <value>lib/hive-hwi-0.12.0.war</value>
 </property>
-<!--
+
 <property>
   <name>hive.metastore.local</name>
   <value>true</value>
 </property>
 -->
+
 </configuration>
