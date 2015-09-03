@@ -1,0 +1,47 @@
+Configuring a remote MySQL database for the Hive Metastore
+
+Step 1: Install and start MySQL
+$ sudo yum install mysql-server
+$ sudo service mysqld start
+
+Step 2: Configure the MySQL Service and Connector
+$ curl -L 'http://www.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.22.tar.gz/from/http://mysql.he.net/' | tar xz
+$ sudo cp mysql-connector-java-5.1.22/mysql-connector-java-5.1.22-bin.jar /usr/lib/hive/lib/
+
+Step 3: To set the MySQL root password
+$ sudo /usr/bin/mysql_secure_installation
+[...]
+Enter current password for root (enter for none):
+OK, successfully used password, moving on...
+[...]
+Set root password? [Y/n] y
+New password:
+Re-enter new password:
+Remove anonymous users? [Y/n] Y
+[...]
+Disallow root login remotely? [Y/n] N
+[...]
+Remove test database and access to it [Y/n] Y
+[...]
+Reload privilege tables now? [Y/n] Y
+All done!
+
+Step 4: To make sure the MySQL server starts at boot
+$ sudo /sbin/chkconfig mysqld on
+$ sudo /sbin/chkconfig --list mysqld
+
+Step 5: Create the Database and User
+$ mysql -u root -p
+Enter password:
+mysql> CREATE DATABASE metastore;
+mysql> USE metastore;
+mysql> SOURCE /usr/lib/hive/scripts/metastore/upgrade/mysql/hive-schema-0.10.0.mysql.sql;
+mysql> CREATE USER 'hive'@'metastorehost' IDENTIFIED BY 'mypassword';
+...
+mysql> REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'hive'@'metastorehost';
+mysql> GRANT SELECT,INSERT,UPDATE,DELETE,LOCK TABLES,EXECUTE ON metastore.* TO 'hive'@'metastorehost';
+mysql> FLUSH PRIVILEGES;
+mysql> quit;
+
+Step 6: Configure the Metastore Service to Communicate with the MySQL Database
+This step shows the configuration properties you need to set in hive-site.xml to configure the metastore service to communicate with the MySQL database, refer on oozie-workflow/config/hive-site.xml
